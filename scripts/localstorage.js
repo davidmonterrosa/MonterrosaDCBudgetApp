@@ -9,6 +9,15 @@ function saveToLocalStorage(itemName) {
     localStorage.setItem('Expenses', JSON.stringify(expensesArr));
 }
 
+function saveBudget(amount)
+{
+    let currentBudget = localStorage.getItem('InitialBudget');
+    if(amount != currentBudget) {
+        localStorage.setItem('InitialBudget', JSON.stringify(amount))
+    }
+    return amount;
+}
+
 function getFromLocalStorage() {
     let localStorageData = localStorage.getItem('Expenses');
 
@@ -29,4 +38,4 @@ function removeFromLocalStorage(itemName) {
     localStorage.setItem('Expenses', JSON.stringify(localStorageData));
 }
 
-export {saveToLocalStorage, getFromLocalStorage, removeFromLocalStorage}
+export {saveToLocalStorage, getFromLocalStorage, removeFromLocalStorage, saveBudget}

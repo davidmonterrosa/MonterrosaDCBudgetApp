@@ -1,4 +1,4 @@
-import { saveToLocalStorage, getFromLocalStorage, removeFromLocalStorage } from "./localstorage.js";
+import { saveToLocalStorage, getFromLocalStorage, removeFromLocalStorage, saveBudget } from "./localstorage.js";
 
 // Id Section
 const availableFunds = document.getElementById("availableFunds");
@@ -8,6 +8,7 @@ const expense = document.getElementById("expense");
 const addExpenseBtn = document.getElementById("addExpenseBtn");
 const budgetAmount = document.getElementById("budgetAmount");
 const setBudgetBtn = document.getElementById("setBudgetBtn");
+const manageBtn = document.getElementById("manageBtn");
 
 const currentExpensesList = document.getElementById("currentExpensesList");
 
@@ -17,20 +18,27 @@ const expensesDisplay = document.getElementById("expensesDisplay");
 let initialBudget = 0;
 let totalMoney = 0;
 let totalExpenses = 0;
-let itemsInLocalStorage = 0;
+
 
 // Functions
+
+function onAppLoad()
+{
+    let savedBudget = localStorage.getItem('InitialBudget');
+    availableFunds.innerText = `$${savedBudget.slice(1, savedBudget.length -1)}`;
+}
+
+function calculateAvailableFunds()
+{
+    totalMoney = initialBudget - totalExpenses;
+    availableFunds.innerText = totalMoney;
+}
+
 function createExpensesList() {
     let expensesList = getFromLocalStorage();
     console.log(expensesList);
     currentExpensesList.innerHTML = "";
-    /*
-        <div class="w-full flex justify-between place-items-center bg-linear-180 from-cyan-300 to-slate-500 rounded-full py-3">
-            <h1 class="ml-4 text-2xl max-w-[45%] overflow-x-scroll">Nebdabdkhjabkjhadbkfhjadbfhkjbtflix</h1>
-            <p class="text-2xl">-$20</p>
-            <button id="deleteItemBtn" class="mr-4 w-8"><img src="./assets/delete.png" alt="remove item"></button>
-        </div>
-    */
+
     expensesList.map((spendingItem) => {
 
         console.log(expensesList);
@@ -60,7 +68,7 @@ function createExpensesList() {
             pill.appendChild(title);
             pill.appendChild(deleteItemBtn);
     
-            deletePokemonBtn.appendChild(deletePokemonIcon);
+            deleteItemBtn.appendChild(deleteIcon);
         }
     )
     // }
@@ -70,7 +78,7 @@ function createExpensesList() {
 // Event Listeners
 
 setBudgetBtn.addEventListener("click", () => {
-    initialBudget = budgetAmount.value;
+    initialBudget = saveBudget(budgetAmount.value);
     console.log(initialBudget);
     totalMoney = initialBudget - totalExpenses;
     console.log(totalMoney);
@@ -83,9 +91,15 @@ addExpenseBtn.addEventListener("click", () => {
         costOfItem: expense.value
     };
     totalExpenses += Number(expense.value);
+    calculateAvailableFunds();
     console.log(totalExpenses);
     saveToLocalStorage(expenseItem);
     createExpensesList();
 });
 
 
+manageBtn.addEventListener("click", () => {
+    createExpensesList();
+});
+
+onAppLoad();
